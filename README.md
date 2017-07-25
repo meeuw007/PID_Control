@@ -1,3 +1,5 @@
+Please see Readme.pdf or Readme.docx
+
 # CarND-Controls-PID
 Self-Driving Car Engineer Nanodegree Program
 

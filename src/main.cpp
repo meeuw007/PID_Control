@@ -12,6 +12,8 @@ constexpr double pi() { return M_PI; }
 double deg2rad(double x) { return x * pi() / 180; }
 double rad2deg(double x) { return x * 180 / pi(); }
 
+
+
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
 // else the empty string "" will be returned.
@@ -40,14 +42,15 @@ int main()
   double init_Ki = -0.0013914;//during setting of parameters: atof(argv[2]);
   double init_Kd = -0.85495;//during setting of parameters: atof(argv[3]);
   
+  
   pid.Init(init_Kp, init_Ki, init_Kd);
   // TODO: Initialize the pid variable.
-
+  
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
-	double sum_cte = 0;
+	//double sum_cte = 0;
     if (length && length > 2 && data[0] == '4' && data[1] == '2')
     {
       auto s = hasData(std::string(data).substr(0, length));
@@ -57,6 +60,8 @@ int main()
         if (event == "telemetry") {
           // j[1] is the data JSON object
           double cte = std::stod(j[1]["cte"].get<std::string>());
+		  /*next line only used during tuning of parameters*/
+		  ////double sum_cte;
 		  //I didn't use the following two variables (speed & angle) with the PID project
 
           //double speed = std::stod(j[1]["speed"].get<std::string>());
@@ -80,8 +85,11 @@ int main()
 		  pid.UpdateError(cte);
 		  steer_value = pid.TotalError();
           std::cout << "CTE" << cte << " Steering Value: " << steer_value << std::endl;
-		  sum_cte += fabs(cte);
-		  std::cout << "sum_cte: " << sum_cte << std::endl;
+		  /* next two lines where used in tuning the parameters during the manual 
+		  run through of the Twiddle algorithm*/
+		  
+		  ////sum_cte += fabs(cte);
+		  ////std::cout << "sum_cte: " << sum_cte << std::endl; 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = 0.2;
